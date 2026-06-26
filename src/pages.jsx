@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Plus, Camera, Lock, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Camera, Lock, Play, User, Trash2, LogOut, RefreshCcw, AlertCircle } from 'lucide-react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,36 +15,96 @@ import { Line } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-// 1단계: 진입 로그인 (통합 화면)
+// 0~1단계 통합: 스플래시 & 로그인 랜딩 페이지
 export const Login = () => {
   const navigate = useNavigate();
-  return (
-    <div className="page-wrapper animate-fade-in" style={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
-      <div style={{textAlign:'center', marginBottom:'40px'}}>
-        <h1 style={{color:'var(--primary)', fontSize:'2.5rem', margin:'0 0 10px 0'}}>i-minder</h1>
-        <p style={{color:'var(--text-light)', margin:0}}>아이의 일상을 읽다, 마음을 잇다</p>
-      </div>
 
-      {/* 개인 사용자 영역 */}
-      <div className="clay-card" style={{marginBottom:'20px', textAlign:'center'}}>
-        <h3 style={{marginTop:0, marginBottom:'20px'}}>개인 사용자로 시작하기</h3>
-        <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
-          <button className="clay-btn" style={{background:'#FEE500', color:'#000'}} onClick={() => navigate('/home?type=personal')}>카카오로 시작하기</button>
-          <button className="clay-btn" style={{background:'#03C75A', color:'#fff'}} onClick={() => navigate('/home?type=personal')}>네이버로 시작하기</button>
-          <button className="clay-btn" style={{background:'#fff', color:'#000', border:'1px solid #ddd'}} onClick={() => navigate('/home?type=personal')}>구글로 시작하기</button>
+  return (
+    <div className="page-wrapper" style={{
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      minHeight: '100vh', 
+      padding: '20px',
+      background: 'var(--bg-color)'
+    }}>
+      {/* 1. 상단 타이틀 영역 (페이드인 & 텍스트 그리기) */}
+      <div style={{textAlign: 'center', marginBottom: '-10px', marginTop: '10px'}}>
+        <p className="fade-in-element" style={{
+          margin: 0, 
+          marginBottom: '0px', 
+          fontSize: '0.9rem', 
+          color: '#333', 
+          fontWeight: '600',
+          letterSpacing: '1px',
+          animationDelay: '0.5s'
+        }}>
+          AI로 분석하는 우리아이 마음
+        </p>
+        
+        {/* 점이 지나가며 글자 나타나는 애니메이션 */}
+        <div className="draw-text-wrapper" style={{lineHeight: '1.1'}}>
+          <div className="drawing-dot"></div>
+          <div className="draw-text-mask">
+            iminder
+          </div>
         </div>
       </div>
-
-      {/* 기관/교사용 영역 */}
-      <div className="clay-card">
-        <h3 style={{marginTop:0, marginBottom:'20px'}}>기관 또는 교사용 계정</h3>
-        <input className="clay-input" type="text" placeholder="아이디 (이메일)" />
-        <input className="clay-input" type="password" placeholder="비밀번호" />
-        <button className="clay-btn" style={{width:'100%', marginBottom:'15px'}} onClick={() => navigate('/home?type=org')}>기관 계정 로그인</button>
+      
+      {/* 2. 중앙 캐릭터 영역 (알약 이미지 간격 대폭 축소) */}
+      <div className="fade-in-element" style={{ animationDelay: '1.5s', marginBottom: '-25px', zIndex: 10 }}>
+        <img 
+          src="/iminder_character.png" 
+          alt="iminder character" 
+          style={{width: '260px', height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0px 10px 15px rgba(0,0,0,0.1))'}} 
+        />
+      </div>
+      {/* 3. 하단 로그인 입력폼 및 버튼 (캐릭터와 간격 축소) */}
+      <div className="fade-in-element clay-card" style={{ 
+        width: '100%', 
+        maxWidth: '340px', 
+        animationDelay: '2s',
+        padding: '30px 20px',
+        marginTop: '-20px'
+      }}>
+        {/* 이메일/비밀번호 입력 */}
+        <div style={{display:'flex', flexDirection:'column', gap:'12px', marginBottom:'20px'}}>
+          <input type="email" placeholder="아이디(이메일)" style={{
+            width:'100%', padding:'14px', borderRadius:'12px', border:'none', background:'#f3f4f6', fontSize:'1rem', boxSizing:'border-box'
+          }}/>
+          <input type="password" placeholder="비밀번호" style={{
+            width:'100%', padding:'14px', borderRadius:'12px', border:'none', background:'#f3f4f6', fontSize:'1rem', boxSizing:'border-box'
+          }}/>
+        </div>
         
-        <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.9rem'}}>
-          <span style={{color:'var(--primary)', cursor:'pointer', fontWeight:'bold'}} onClick={() => navigate('/signup-form')}>기관 계정 가입 신청</span>
-          <span style={{color:'var(--text-light)', cursor:'pointer'}}>아이디/비밀번호 찾기</span>
+        <button className="clay-btn accent" style={{width:'100%', justifyContent:'center', marginBottom:'25px'}} onClick={() => navigate('/home')}>
+          로그인
+        </button>
+
+        {/* 간편 로그인 (정사각형 아이콘) */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
+          <button style={{ width:'50px', height:'50px', borderRadius:'15px', background: '#FEE500', color: '#000', border:'none', fontSize:'1.2rem', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <b>K</b>
+          </button>
+          <button style={{ width:'50px', height:'50px', borderRadius:'15px', background: '#03C75A', color: '#fff', border:'none', fontSize:'1.2rem', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <b>N</b>
+          </button>
+          <button style={{ width:'50px', height:'50px', borderRadius:'15px', background: '#FFFFFF', color: '#000', border: '1px solid #e5e5e5', fontSize:'1.2rem', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <b>G</b>
+          </button>
+        </div>
+
+        {/* 하단 링크 메뉴 */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', fontSize: '0.85rem', color: '#666', fontWeight: '500' }}>
+          <span onClick={() => navigate('/org-block')} style={{cursor:'pointer', textDecoration:'underline', color:'var(--primary)'}}>
+            기업회원 로그인하러 가기
+          </span>
+          <div style={{ display: 'flex', gap: '15px', color: '#999' }}>
+            <span onClick={() => navigate('/signup-form')} style={{cursor:'pointer'}}>회원가입하러 가기</span>
+            <span>|</span>
+            <span style={{cursor:'pointer'}}>아이디/비밀번호 찾기</span>
+          </div>
         </div>
       </div>
     </div>
@@ -106,24 +166,28 @@ export const MainHome = () => {
   const type = new URLSearchParams(window.location.search).get('type') || 'personal';
   const [showModal, setShowModal] = useState(false);
   const [children, setChildren] = useState([
-    { id: 1, name: '김지훈', char: '🐶', isLocked: true, status: '정식등록' },
-    ...(type === 'org' ? [{ id: 2, name: '이지민 (햇님반)', char: '🐱', isLocked: true, status: '보호자 동의 요청 중 (D-3)' }] : [])
+    { id: 1, name: '김지훈', age: '만 4세', char: '🐶', isLocked: true, status: '정식등록' },
+    // 두 명일 경우 주석 해제하여 확인
+    // { id: 2, name: '이지민', age: '만 3세', char: '🐱', isLocked: true, status: '정식등록' }
   ]);
 
   return (
-    <div className="page-wrapper animate-fade-in">
+    <div className="page-wrapper animate-fade-in" style={{ backgroundColor: '#fffdf0', minHeight: '100vh', paddingBottom: '80px' }}>
       <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px'}}>
-        <h2>안녕하세요, {type === 'org' ? '햇님어린이집' : '지훈이 부모님'}! 👋</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>오늘의 우리아이</h2>
       </div>
 
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px'}}>
+      <div style={{display:'flex', justifyContent:'center', gap:'20px'}}>
         {children.map(c => (
-          <div key={c.id} className="clay-card" style={{textAlign:'center', cursor: c.status.includes('요청 중') ? 'not-allowed' : 'pointer', opacity: c.status.includes('요청 중') ? 0.7 : 1}} 
-               onClick={() => !c.status.includes('요청 중') && navigate('/dashboard')}>
+          <div key={c.id} className="clay-card" style={{
+            textAlign:'center', cursor: c.status.includes('요청 중') ? 'not-allowed' : 'pointer', 
+            opacity: c.status.includes('요청 중') ? 0.7 : 1,
+            width: children.length === 1 ? '200px' : '150px' // 1명이면 크고 가운데, 2명이면 적당한 크기
+          }} onClick={() => !c.status.includes('요청 중') && navigate('/dashboard')}>
             <div style={{width:'80px', height:'80px', background:'#f3e8ff', borderRadius:'50%', margin:'0 auto 10px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'40px', position:'relative'}}>
               {c.char}
             </div>
-            <h3 style={{margin:0}}>{c.name}</h3>
+            <h3 style={{margin:0, fontSize: '1.1rem'}}>{c.name} <span style={{fontSize:'0.9rem', color:'#666', fontWeight:'normal'}}>({c.age})</span></h3>
             {c.status.includes('요청 중') && (
               <p style={{margin:'10px 0 0', color:'#ef4444', fontSize:'0.8rem', fontWeight:'bold'}}>{c.status}</p>
             )}
@@ -131,11 +195,28 @@ export const MainHome = () => {
         ))}
       </div>
 
-      <div style={{position:'fixed', bottom:'40px', right:'calc(50% - 220px)', zIndex:10, display:'flex', flexDirection:'column', alignItems:'flex-end'}}>
+      <div style={{position:'fixed', bottom:'90px', right:'calc(50% - 220px)', zIndex:10, display:'flex', flexDirection:'column', alignItems:'flex-end'}}>
         <div className="bubble" style={{marginBottom:'15px', marginRight:'20px'}}>우리 아이를 등록해볼까요?</div>
         <button className="clay-btn accent" style={{borderRadius:'50%', width:'60px', height:'60px', padding:0, marginRight:'20px'}} onClick={() => setShowModal(true)}>
           <Plus size={30} />
         </button>
+      </div>
+
+      {/* 하단 네비게이션 바 */}
+      <div style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0, height: '70px',
+        background: '#fff', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
+        borderTop: '1px solid #eaeaea', zIndex: 50, maxWidth: '480px', margin: '0 auto'
+      }}>
+        <div style={{display:'flex', flexDirection:'column', alignItems:'center', cursor:'pointer'}} onClick={() => navigate('/home')}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div style={{display:'flex', flexDirection:'column', alignItems:'center', cursor:'pointer'}} onClick={() => navigate('/mypage')}>
+          <span style={{color:'var(--primary)', fontWeight:'900', fontSize:'16px', letterSpacing:'1px'}}>MY PAGE</span>
+        </div>
       </div>
 
       {showModal && (
@@ -522,6 +603,153 @@ export const RecordDetail = () => {
           </p>
         </div>
       </div>
+    </div>
+  );
+};
+
+// 마이페이지 (설정 및 휴지통 관리)
+export const MyPage = () => {
+  const navigate = useNavigate();
+  const [viewTrash, setViewTrash] = useState(false);
+  const [deletedProfiles, setDeletedProfiles] = useState([
+    { id: 99, name: '김지훈(과거기록)', deletedAt: '2026-06-20', daysLeft: 56 }
+  ]);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [targetToDelete, setTargetToDelete] = useState(null);
+
+  // 영구 삭제 처리 로직
+  const handlePermanentDelete = () => {
+    if (deleteConfirmText === '삭제하겠습니다.') {
+      setDeletedProfiles(deletedProfiles.filter(p => p.id !== targetToDelete));
+      setTargetToDelete(null);
+      setDeleteConfirmText('');
+      alert('데이터가 영구 삭제되었습니다.');
+    }
+  };
+
+  // 복원 처리 로직
+  const handleRestore = (id) => {
+    setDeletedProfiles(deletedProfiles.filter(p => p.id !== id));
+    alert('프로필이 성공적으로 복원되었습니다!');
+  };
+
+  if (viewTrash) {
+    return (
+      <div className="page-wrapper animate-fade-in" style={{padding: '20px', minHeight: '100vh', background: 'var(--bg-color)'}}>
+        <div style={{display:'flex', alignItems:'center', marginBottom:'30px'}}>
+          <button className="clay-btn secondary" style={{padding:'8px', marginRight:'15px'}} onClick={() => setViewTrash(false)}><ChevronLeft/></button>
+          <h2 style={{margin:0, fontSize:'1.4rem'}}>휴지통 관리</h2>
+        </div>
+
+        <p style={{fontSize:'0.9rem', color:'#666', marginBottom:'20px', lineHeight:'1.5'}}>
+          삭제된 아이 프로필과 분석 기록은 이곳에 <strong>60일간 안전하게 보관</strong>되며, 이후 자동으로 영구 삭제됩니다.
+        </p>
+
+        {deletedProfiles.length === 0 ? (
+          <div style={{textAlign:'center', padding:'50px 0', color:'#999'}}>휴지통이 비어 있습니다.</div>
+        ) : (
+          <div style={{display:'flex', flexDirection:'column', gap:'15px'}}>
+            {deletedProfiles.map(profile => (
+              <div key={profile.id} className="clay-card" style={{padding:'20px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                <div>
+                  <h4 style={{margin:'0 0 5px 0', fontSize:'1.1rem'}}>{profile.name}</h4>
+                  <div style={{fontSize:'0.8rem', color:'#888'}}>삭제일: {profile.deletedAt}</div>
+                  <div style={{fontSize:'0.8rem', color:'#ef4444', fontWeight:'bold', marginTop:'3px'}}>영구 삭제까지 D-{profile.daysLeft}</div>
+                </div>
+                <div style={{display:'flex', gap:'10px'}}>
+                  <button className="clay-btn secondary" style={{padding:'10px', borderRadius:'12px'}} onClick={() => handleRestore(profile.id)}>
+                    <RefreshCcw size={18} color="var(--primary)" />
+                  </button>
+                  <button className="clay-btn secondary" style={{padding:'10px', borderRadius:'12px', background:'#fee2e2'}} onClick={() => setTargetToDelete(profile.id)}>
+                    <Trash2 size={18} color="#ef4444" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 영구 삭제 확인 모달 (타이핑 방어 로직) */}
+        {targetToDelete && (
+          <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:100, padding:'20px'}}>
+            <div className="clay-card animate-fade-in" style={{width:'100%', maxWidth:'360px', padding:'30px 20px'}}>
+              <div style={{display:'flex', justifyContent:'center', marginBottom:'15px'}}>
+                <AlertCircle size={40} color="#ef4444" />
+              </div>
+              <h3 style={{textAlign:'center', margin:'0 0 15px 0', color:'#ef4444'}}>영구 삭제 경고</h3>
+              <p style={{fontSize:'0.9rem', color:'#444', lineHeight:'1.5', marginBottom:'20px', textAlign:'center'}}>
+                이 작업은 <strong>절대 되돌릴 수 없으며</strong> 관련된 모든 분석 데이터가 즉시 영구 삭제됩니다.
+              </p>
+              
+              <div style={{background:'#f5f5f5', padding:'15px', borderRadius:'12px', marginBottom:'20px'}}>
+                <p style={{margin:'0 0 10px 0', fontSize:'0.85rem', color:'#666', textAlign:'center'}}>
+                  확인을 위해 아래 문구를 정확히 입력해 주세요.<br/>
+                  <strong style={{color:'#000', fontSize:'1rem'}}>'삭제하겠습니다.'</strong> (마침표 포함)
+                </p>
+                <input 
+                  type="text" 
+                  className="clay-input" 
+                  style={{marginBottom:0, textAlign:'center', background:'#fff'}} 
+                  placeholder="삭제하겠습니다."
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                />
+              </div>
+
+              <div style={{display:'flex', gap:'10px'}}>
+                <button className="clay-btn secondary" style={{flex:1}} onClick={() => {setTargetToDelete(null); setDeleteConfirmText('');}}>취소</button>
+                <button 
+                  className="clay-btn" 
+                  style={{flex:1, background: deleteConfirmText === '삭제하겠습니다.' ? '#ef4444' : '#fca5a5', color:'#fff', cursor: deleteConfirmText === '삭제하겠습니다.' ? 'pointer' : 'not-allowed'}}
+                  onClick={handlePermanentDelete}
+                  disabled={deleteConfirmText !== '삭제하겠습니다.'}
+                >
+                  영구 삭제
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-wrapper animate-fade-in" style={{padding: '20px', minHeight: '100vh', background: 'var(--bg-color)'}}>
+      <div style={{display:'flex', alignItems:'center', marginBottom:'30px'}}>
+        <button className="clay-btn secondary" style={{padding:'8px', marginRight:'15px'}} onClick={() => navigate(-1)}><ChevronLeft/></button>
+        <h2 style={{margin:0, fontSize:'1.5rem', fontWeight:'bold'}}>MY PAGE</h2>
+      </div>
+
+      <div className="clay-card" style={{padding:'25px 20px', marginBottom:'20px', display:'flex', alignItems:'center', gap:'15px'}}>
+        <div style={{width:'50px', height:'50px', background:'#f3e8ff', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center'}}>
+          <User size={24} color="var(--primary)" />
+        </div>
+        <div>
+          <div style={{fontSize:'1.1rem', fontWeight:'bold', marginBottom:'5px'}}>지훈이 부모님</div>
+          <div style={{fontSize:'0.9rem', color:'#666'}}>parent@example.com</div>
+        </div>
+      </div>
+
+      <h3 style={{fontSize:'1.1rem', marginBottom:'15px', marginLeft:'5px', color:'#555'}}>계정 설정</h3>
+      <div className="clay-card" style={{padding:'10px 20px', marginBottom:'30px'}}>
+        <div style={{padding:'15px 0', borderBottom:'1px solid #f0f0f0', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer'}}>
+          <span style={{fontWeight:'500'}}>비밀번호 변경</span>
+          <ChevronRight size={18} color="#999" />
+        </div>
+        <div style={{padding:'15px 0', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer'}} onClick={() => setViewTrash(true)}>
+          <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+            <Trash2 size={18} color="#ef4444" />
+            <span style={{fontWeight:'500', color:'#ef4444'}}>휴지통 관리</span>
+          </div>
+          <ChevronRight size={18} color="#999" />
+        </div>
+      </div>
+
+      <button className="clay-btn secondary" style={{width:'100%', padding:'16px', display:'flex', justifyContent:'center', gap:'10px', color:'#666'}} onClick={() => navigate('/')}>
+        <LogOut size={20} />
+        로그아웃
+      </button>
     </div>
   );
 };

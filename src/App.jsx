@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Login, SignupForm, OrgBlockScreen, MainHome, ActionFlow, AnalysisResult, Dashboard, WriteRecord, RecordDetail } from './pages';
+import { Login, SignupForm, OrgBlockScreen, MainHome, ActionFlow, AnalysisResult, Dashboard, WriteRecord, RecordDetail, MyPage } from './pages';
 import './index.css';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <BrowserRouter>
       <div className="container">
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup-form" element={<SignupForm />} />
           <Route path="/org-block" element={<OrgBlockScreen />} />
@@ -18,6 +18,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/write-record" element={<WriteRecord />} />
           <Route path="/record-detail" element={<RecordDetail />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </div>
     </BrowserRouter>
